@@ -30,8 +30,8 @@ export async function fetchUserTopTracks(token, limit = 10) {
     }
 
     const data = await response.json();
-    console.log('Fetched Top Tracks Data:', data);
-    return data.items; 
+    //  console.log('Fetched Top Tracks Data:', data);
+    return data.items;
   } catch (error) {
     console.error('Error fetching top tracks:', error);
     return [];
@@ -53,8 +53,8 @@ export async function fetchUserTopArtists(token, limit = 10) {
     }
 
     const data = await response.json();
-    console.log('Fetched Top Artists Data:', data);
-    return data.items; 
+    // console.log('Fetched Top Artists Data:', data);
+    return data.items;
   } catch (error) {
     console.error('Error fetching top artists:', error);
     return [];
@@ -95,7 +95,73 @@ export async function fetchUserTopGenres(token, limit = 10) {
   } catch (error) {
     console.error('Error fetching top genres:', error);
     return [];
- 
+
   }
 
 }
+
+// Fetch user playlists
+
+export const fetchUserPlaylists = async (spotifyApiToken) => {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/playlists', {
+      headers: {
+        Authorization: `Bearer ${spotifyApiToken}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch user playlists');
+    }
+    const data = await response.json();
+    return data.items; // Return all playlists
+  } catch (error) {
+    console.error('Error fetching playlists:', error);
+    return [];
+  }
+};
+
+// GET/POST request for Playlist Management (Suggestion)
+
+export const addTracksToPlaylist = async (token, playlistId, trackUris) => {
+  try {
+    const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uris: trackUris }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to add tracks');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding tracks to playlist:', error);
+    return null;
+  }
+};
+
+
+// Recommendations (Suggestion)
+
+export const fetchRecommendations = async (token, seedData) => {
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/recommendations?${new URLSearchParams(seedData)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch recommendations');
+    }
+    const data = await response.json();
+    return data.tracks; // List of recommended tracks
+  } catch (error) {
+    console.error('Error fetching recommendations:', error);
+    return [];
+  }
+};

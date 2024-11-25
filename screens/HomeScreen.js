@@ -16,16 +16,17 @@ import {
   fetchUserTopGenres,
   fetchUserTopTracks,
   fetchUserRecentlyPlayedTracks,
+  fetchUserPlaylists,
 } from '../components/spotifyApi';
 
 export default function HomeScreen({ userData, spotifyApiToken }) {
-  const [topGenres, setTopGenres] = useState([]);
+  const [topGenres, setTopGenres] = useState([]); // WIP
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentData, setCurrentData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentTitle, setCurrentTitle] = useState('Top Tracks');
+  const [playlists, setPlaylists] = useState({ created: [], subscribed: [] });
 
-  // Toggles menu modal visibility
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
@@ -35,7 +36,27 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
     try {
       setLoading(true);
       const data = await apiFunction(spotifyApiToken);
-      console.log('Fetched Data:', data);
+
+      if (apiFunction === fetchUserPlaylists) {
+        const createdPlaylists = data.filter(
+          // Sort playlists by the creator. Checks if the playlist is created by the logged in user.
+          (playlist) => playlist.owner.display_name === userData.display_name
+        );
+        const subscribedPlaylists = data.filter(
+          (playlist) => playlist.owner.display_name !== userData.display_name
+        );
+
+        console.log("Created Playlists:", createdPlaylists);
+        console.log("Subscribed Playlists:", subscribedPlaylists);
+
+        setPlaylists({ created: createdPlaylists, subscribed: subscribedPlaylists });
+        setCurrentData([]);
+      } else {
+        setCurrentData(data);
+        setPlaylists([]);
+      }
+
+      //console.log('Fetched Data:', data);
       setCurrentData(data);
       //Important line of code! 
       //Ie. The original name would be printed "fetchUserTopGenres"
@@ -48,19 +69,20 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       setLoading(false);
     }
     console.log("Spotify api token:", spotifyApiToken);
-    
   };
+
 
   const menuOptions = [
     { label: 'Top Genres', onPress: () => fetchData(fetchUserTopGenres) },
     { label: 'Top Artists', onPress: () => fetchData(fetchUserTopArtists) },
     { label: 'Top Tracks', onPress: () => fetchData(fetchUserTopTracks) },
     { label: 'Recently Played', onPress: () => fetchData(fetchUserRecentlyPlayedTracks) },
+    { label: 'My Playlists', onPress: () => fetchData(fetchUserPlaylists) },
   ];
 
   return (
     <View style={styles.container}>
-      {/* User Info Section, visible all the time */}
+      {/* User Info Section */}
       {userData && (
         <View style={styles.userInfoContainer}>
           {userData.images?.[0]?.url && (
@@ -70,8 +92,8 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
             />
           )}
           <View style={styles.userDetails}>
-            <Text style={styles.displayName}>Hello, {userData.display_name}!</Text>
-            <Text style={styles.email}>{userData.email}</Text>
+            <Text style={styles.displayName}>Hello, {userData.display_name || 'User'}!</Text>
+            <Text style={styles.email}>{userData.email || 'Email not available'}</Text>
           </View>
         </View>
       )}
@@ -79,39 +101,85 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       {/* Current Data Section */}
       <Text style={styles.topTracksTitle}>{currentTitle}:</Text>
       {loading ? (
-        <ActivityIndicator size="large" color="#6200ee" />
-      ) : currentData && currentData.length > 0 ? (
-        <FlatList
-        data={currentData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.trackContainer}>
-            {currentTitle === 'Top Artists' && item.images?.[0]?.url && (
-              <Image
-                source={{ uri: item.images[0].url }}  // Access the first image URL for artist
-                style={styles.trackImage}
-              />
-            )}
-            {currentTitle === 'Top Tracks' && item.album?.images?.[0]?.url && (
-              <Image
-                source={{ uri: item.album.images[0].url }}  // Access the first album image URL for track
-                style={styles.trackImage}
-              />
-            )}
-            <Text style={styles.trackText}>
-              {item.name} {item.artists?.map((artist) => artist.name).join(', ')}
-            </Text>
-          </View>
-        )}
-      />
+        <ActivityIndicator size="large" color="#1DB954" />
+      ) : currentTitle === 'My Playlists' ? (
+        <>
+          {/* Playlists Created by You (WIP) */}
+          <Text style={styles.sectionTitle}>Playlists Created by You:</Text>
+          {playlists.created.length > 0 ? (
+            <FlatList
+              data={playlists.created}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.playlistContainer}>
+                  {item.images?.[0]?.url && (
+                    <Image
+                      source={{ uri: item.images[0].url }}
+                      style={styles.playlistImage}
+                    />
+                  )}
+                  <Text style={styles.playlistText}>{item.name}</Text>
+                </View>
+              )}
+            />
+          ) : (
+            <Text>No playlists created by you.</Text>
+          )}
+
+          {/* Playlists You've Subscribed To (WIP) */}
+          <Text style={styles.sectionTitle}>Playlists You've Subscribed To:</Text>
+          {playlists.subscribed.length > 0 ? (
+            <FlatList
+              data={playlists.subscribed}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.playlistContainer}>
+                  {item.images?.[0]?.url && (
+                    <Image
+                      source={{ uri: item.images[0].url }}
+                      style={styles.playlistImage}
+                    />
+                  )}
+                  <Text style={styles.playlistText}>{item.name}</Text>
+                </View>
+              )}
+            />
+          ) : (
+            <Text>No subscribed playlists.</Text>
+          )}
+        </>
       ) : (
-        <Text>No data available.</Text>
+        <FlatList
+          data={currentData}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.trackContainer}>
+              {currentTitle === 'Top Artists' && item.images?.[0]?.url ? (
+                <Image
+                  source={{ uri: item.images[0].url }}
+                  style={styles.trackImage}
+                />
+              ) : currentTitle === 'Top Tracks' && item.album?.images?.[0]?.url ? (
+                <Image
+                  source={{ uri: item.album.images[0].url }}
+                  style={styles.trackImage}
+                />
+              ) : null}
+              <Text style={styles.trackText}>
+                {item.name}
+                {item.artists?.length > 0 &&
+                  ` - ${item.artists.map((artist) => artist.name).join(', ')}`}
+              </Text>
+            </View>
+          )}
+        />
       )}
 
       <TouchableOpacity style={styles.fab} onPress={toggleMenu}>
-        <Ionicons name="menu" size={24} color="white" />
+        <Ionicons name="menu" size={24} />
       </TouchableOpacity>
 
+      {/* Menu Modal */}
       <Modal
         visible={menuVisible}
         animationType="slide"

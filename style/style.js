@@ -87,6 +87,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    color: '#333',
+  },
 });
 
 export default styles;
