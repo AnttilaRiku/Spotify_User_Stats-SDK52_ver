@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from '../screens/HomeScreen';
+import { StatusBar } from 'react-native';
 import ProfileScreen from '../screens/ProfileScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 
@@ -11,6 +12,7 @@ const Tab = createBottomTabNavigator();
 export default function Navigation({ userData, topTracks,  spotifyApiToken, onLogout }) {
   return (
     <NavigationContainer>
+      <StatusBar backgroundColor="#121212"/>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -26,8 +28,13 @@ export default function Navigation({ userData, topTracks,  spotifyApiToken, onLo
 
             return <Icon name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: '#1db954',
+          tabBarInactiveTintColor: '#b3b3b3',
+          tabBarStyle: {
+            backgroundColor: '#121212', 
+            borderTopWidth: 1, 
+            borderTopColor: '#535353', 
+          },
         })}
       >
         <Tab.Screen name="Home">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Button } from 'react-native';
+import styles from '../style/style.js';
 
 export default function LogoutScreen({ onLogout }) {
   return (

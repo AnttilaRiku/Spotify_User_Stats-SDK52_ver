@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Button, Text } from 'react-native';
+import { View, Image } from 'react-native'; 
+import { Button, Text } from 'react-native-paper'; 
 import { authenticateWithSpotify } from './spotifyAuth';
 import { fetchUserData } from './spotifyApi';
+import styles from '../style/style.js';
 
 export default function LoginScreen({ navigation, setToken, setUserData }) {
 
@@ -18,8 +20,11 @@ export default function LoginScreen({ navigation, setToken, setUserData }) {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title="Login with Spotify" onPress={handleLogin} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+      
+      <Button mode="contained" onPress={handleLogin}>
+        Login with Spotify
+      </Button>
     </View>
   );
 }

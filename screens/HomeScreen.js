@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '../style/style';
+import styles from '../style/style.js';
 
 import {
   fetchUserTopArtists,

@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import Navigation from './components/Navigation';
 import { authenticateWithSpotify } from './components/spotifyAuth';
 import { fetchUserData, fetchUserTopTracks } from './components/spotifyApi';
+import { PaperProvider,DefaultTheme } from 'react-native-paper';
+import { Button } from 'react-native-paper';
+
+const spotifyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#1db954', 
+    secondary: '#212121', 
+    background: '#121212', 
+    surface: '#121212', 
+    text: '#b3b3b3', 
+    placeholder: '#535353', 
+    accent: '#535353', 
+  },
+};
+
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -53,23 +70,27 @@ export default function App() {
   }, [token]);
 
   return (
-    <View style={{ flex: 1 }}>
-      {!userData ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {loading ? (
-            <ActivityIndicator size="large" color="#6200ee" />
-          ) : (
-            <Button title="Login with Spotify" onPress={handleLogin} />
-          )}
-        </View>
-      ) : (
-        <Navigation
-          userData={userData}
-          topTracks={topTracks}
-          spotifyApiToken={token}
-          onLogout={handleLogout}
-        />
-      )}
-    </View>
+    <PaperProvider theme={spotifyTheme}>
+      <View style={{ flex: 1 }}>
+        {!userData ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#1db954" />
+            ) : (
+              <Button mode="contained" onPress={handleLogin}>
+                Login with Spotify
+              </Button>
+            )}
+          </View>
+        ) : (
+          <Navigation
+            userData={userData}
+            topTracks={topTracks}
+            spotifyApiToken={token}
+            onLogout={handleLogout}
+          />
+        )}
+      </View>
+    </PaperProvider>
   );
 }
