@@ -20,7 +20,7 @@ import {
 } from '../components/spotifyApi';
 
 export default function HomeScreen({ userData, spotifyApiToken }) {
-  const [topGenres, setTopGenres] = useState([]); // WIP
+  const [topGenres, setTopGenres] = useState([]); // Genret tallennetaan tähän
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentData, setCurrentData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,15 +45,18 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         const subscribedPlaylists = data.filter(
           (playlist) => playlist.owner.display_name !== userData.display_name
         );
-
         console.log("Created Playlists:", createdPlaylists);
         console.log("Subscribed Playlists:", subscribedPlaylists);
 
         setPlaylists({ created: createdPlaylists, subscribed: subscribedPlaylists });
         setCurrentData([]);
+      } else if (apiFunction === fetchUserTopGenres) {
+        setTopGenres(data); // Päivitä genret
+        setCurrentData([]);
       } else {
         setCurrentData(data);
         setPlaylists([]);
+        setTopGenres([]);
       }
 
       //console.log('Fetched Data:', data);
@@ -63,14 +66,14 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       //Remove "fetchUser from the name that is visible so the name is now --> "Top Genres" instead of "fetchUserTopGenres"
       //Adds spaces before uppercase letters so the name is printed --> "Top Genres"
       setCurrentTitle(apiFunction.name.replace('fetchUser', '').replace(/([A-Z])/g, ' $1').trim());
+
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
-    }
+    }    
     console.log("Spotify api token:", spotifyApiToken);
   };
-
 
   const menuOptions = [
     { label: 'Top Genres', onPress: () => fetchData(fetchUserTopGenres) },
@@ -102,77 +105,91 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       <Text style={styles.topTracksTitle}>{currentTitle}:</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#1DB954" />
-      ) : currentTitle === 'My Playlists' ? (
+      ) : (
         <>
-          {/* Playlists Created by You (WIP) */}
-          <Text style={styles.sectionTitle}>Playlists Created by You:</Text>
-          {playlists.created.length > 0 ? (
+          {/* Genre-näkymä */}
+          {currentTitle === 'Top Genres' ? (
             <FlatList
-              data={playlists.created}
-              keyExtractor={(item) => item.id}
+              data={topGenres}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <View style={styles.playlistContainer}>
-                  {item.images?.[0]?.url && (
-                    <Image
-                      source={{ uri: item.images[0].url }}
-                      style={styles.playlistImage}
-                    />
-                  )}
-                  <Text style={styles.playlistText}>{item.name}</Text>
-                </View>
+                <Text style={styles.genreText}>{item}</Text> 
               )}
             />
-          ) : (
-            <Text>No playlists created by you.</Text>
-          )}
+          ) : currentTitle === 'My Playlists' ? (
+            <>
+              {/* Playlists Created by You (WIP) */}
+              <Text style={styles.sectionTitle}>Playlists Created by You:</Text>
+              {playlists.created.length > 0 ? (
+                <FlatList
+                  data={playlists.created}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <View style={styles.playlistContainer}>
+                      {item.images?.[0]?.url && (
+                        <Image
+                          source={{ uri: item.images[0].url }}
+                          style={styles.playlistImage}
+                        />
+                      )}
+                      <Text style={styles.playlistText}>{item.name}</Text>
+                    </View>
+                  )}
+                />
+              ) : (
+                <Text>No playlists created by you.</Text>
+              )}
 
-          {/* Playlists You've Subscribed To (WIP) */}
-          <Text style={styles.sectionTitle}>Playlists You've Subscribed To:</Text>
-          {playlists.subscribed.length > 0 ? (
+              {/* Playlists You've Subscribed To (WIP) */}
+              <Text style={styles.sectionTitle}>Playlists You've Subscribed To:</Text>
+              {playlists.subscribed.length > 0 ? (
+                <FlatList
+                  data={playlists.subscribed}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <View style={styles.playlistContainer}>
+                      {item.images?.[0]?.url && (
+                        <Image
+                          source={{ uri: item.images[0].url }}
+                          style={styles.playlistImage}
+                        />
+                      )}
+                      <Text style={styles.playlistText}>{item.name}</Text>
+                    </View>
+                  )}
+                />
+              ) : (
+                <Text>No subscribed playlists.</Text>
+              )}
+            </>
+          ) : (
             <FlatList
-              data={playlists.subscribed}
+              data={currentData}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <View style={styles.playlistContainer}>
-                  {item.images?.[0]?.url && (
+                <View style={styles.trackContainer}>
+                  
+                  {currentTitle === 'Top Artists' && item.images?.[0]?.url ? (
                     <Image
                       source={{ uri: item.images[0].url }}
-                      style={styles.playlistImage}
+                      style={styles.trackImage}
                     />
-                  )}
-                  <Text style={styles.playlistText}>{item.name}</Text>
+                  ) : currentTitle === 'Top Tracks' && item.album?.images?.[0]?.url ? (
+                    <Image
+                      source={{ uri: item.album.images[0].url }}
+                      style={styles.trackImage}
+                    />
+                  ) : null}
+                  <Text style={styles.trackText}>
+                    {item.name}
+                    {item.artists?.length > 0 &&
+                      ` - ${item.artists.map((artist) => artist.name).join(', ')}`}
+                  </Text>
                 </View>
               )}
             />
-          ) : (
-            <Text>No subscribed playlists.</Text>
           )}
         </>
-      ) : (
-        <FlatList
-          data={currentData}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.trackContainer}>
-              {currentTitle === 'Top Artists' && item.images?.[0]?.url ? (
-                <Image
-                  source={{ uri: item.images[0].url }}
-                  style={styles.trackImage}
-                />
-              ) : currentTitle === 'Top Tracks' && item.album?.images?.[0]?.url ? (
-                <Image
-                  source={{ uri: item.album.images[0].url }}
-                  style={styles.trackImage}
-                />
-              ) : null}
-              <Text style={styles.trackText}>
-                {item.name}
-                {item.artists?.length > 0 &&
-                  ` - ${item.artists.map((artist) => artist.name).join(', ')}`}
-              </Text>
-            </View>
-          )}
-        />
       )}
 
       <TouchableOpacity style={styles.fab} onPress={toggleMenu}>

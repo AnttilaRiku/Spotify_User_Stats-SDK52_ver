@@ -94,6 +94,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: '#333',
   },
+  genreText: {
+    fontSize: 16,
+    color: '#fff',
+    padding: 8,
+  }
 });
 
 export default styles;
