@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#121212', // Käytetään tummaa taustaa, joka on määritelty teemassa
+    backgroundColor: '#121212', 
   },
   userInfoContainer: {
     flexDirection: 'row',
@@ -100,27 +100,27 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   closeButton: {
-    alignSelf: 'flex-end', // Asettaa oikeaan yläkulmaan
-    margin: 10,            // Väli reunoista
-    backgroundColor: '#1db954', // Tausta mustaksi
-    padding: 5,            // Nappi tilavammaksi
-    borderRadius: 15,      // Pyöreät kulmat
+    alignSelf: 'flex-end', 
+    margin: 10,            
+    backgroundColor: '#1db954', 
+    padding: 5,            
+    borderRadius: 15,      
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Tumma läpinäkyvä tausta
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', 
   },
   menu: {
     backgroundColor: '#121212', 
-    borderRadius: 10,          // Pyöristetyt kulmat
-    padding: 20,               // Tilaa sisällölle
-    margin: 20,                // Modalin reunoihin etäisyys
+    borderRadius: 10,       
+    padding: 20,             
+    margin: 20,                
   },
   menuItem: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#1db954', // Erotteluraja
+    borderBottomColor: '#1db954', 
   },
   menuText: {
     color: '#fff', 
