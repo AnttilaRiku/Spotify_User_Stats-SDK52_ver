@@ -23,17 +23,17 @@ const styles = StyleSheet.create({
   displayName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#b3b3b3', // Teksti väri vaaleanharmaaksi, joka on määritelty teemassa
+    color: '#b3b3b3', 
   },
   email: {
     fontSize: 16,
-    color: '#b3b3b3', // Vaaleanharmaa teksti
+    color: '#b3b3b3', 
   },
   topTracksTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#b3b3b3', // Käytetään teemassa määriteltyä teksti väriä
+    color: '#b3b3b3',
   },
   trackContainer: {
     flexDirection: 'row',
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   trackText: {
     fontSize: 16,
-    color: '#b3b3b3', // Käytetään teemassa määriteltyä teksti väriä
+    color: '#b3b3b3', 
   },
   link: {
     color: '#1db954', 
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#191414', 
+    backgroundColor: '#1db954', 
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -98,7 +98,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     padding: 8,
-  }
+  },
+  closeButton: {
+    alignSelf: 'flex-end', // Asettaa oikeaan yläkulmaan
+    margin: 10,            // Väli reunoista
+    backgroundColor: '#1db954', // Tausta mustaksi
+    padding: 5,            // Nappi tilavammaksi
+    borderRadius: 15,      // Pyöreät kulmat
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Tumma läpinäkyvä tausta
+  },
+  menu: {
+    backgroundColor: '#121212', 
+    borderRadius: 10,          // Pyöristetyt kulmat
+    padding: 20,               // Tilaa sisällölle
+    margin: 20,                // Modalin reunoihin etäisyys
+  },
+  menuItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1db954', // Erotteluraja
+  },
+  menuText: {
+    color: '#fff', 
+    fontSize: 18,
+    textAlign: 'center',
+  },
+ 
 });
 
 export default styles;

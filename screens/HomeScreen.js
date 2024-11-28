@@ -96,7 +96,6 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
           )}
           <View style={styles.userDetails}>
             <Text style={styles.displayName}>Hello, {userData.display_name || 'User'}!</Text>
-            <Text style={styles.email}>{userData.email || 'Email not available'}</Text>
           </View>
         </View>
       )}
@@ -196,30 +195,34 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         <Ionicons name="menu" size={24} />
       </TouchableOpacity>
 
-      {/* Menu Modal */}
       <Modal
-        visible={menuVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={toggleMenu}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.menu}>
-            {menuOptions.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.menuItem}
-                onPress={() => {
-                  option.onPress();
-                  toggleMenu();
-                }}
-              >
-                <Text style={styles.menuText}>{option.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </Modal>
+  visible={menuVisible}
+  animationType="slide"
+  transparent={true}
+  onRequestClose={toggleMenu}
+>
+<View style={styles.modalContainer}>
+<View style={styles.menu}>
+      {/* Close Button */}
+<TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
+<Ionicons name="close" size={24} color="#121212" />
+</TouchableOpacity>
+ 
+      {menuOptions.map((option, index) => (
+<TouchableOpacity
+          key={index}
+          style={styles.menuItem}
+          onPress={() => {
+            option.onPress();
+            toggleMenu();
+          }}
+>
+<Text style={styles.menuText}>{option.label}</Text>
+</TouchableOpacity>
+      ))}
+</View>
+</View>
+</Modal>
     </View>
   );
 }

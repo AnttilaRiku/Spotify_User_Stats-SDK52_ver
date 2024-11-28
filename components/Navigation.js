@@ -33,8 +33,15 @@ export default function Navigation({ userData, topTracks,  spotifyApiToken, onLo
           tabBarStyle: {
             backgroundColor: '#121212', 
             borderTopWidth: 1, 
-            borderTopColor: '#535353', 
+            borderTopColor: '#1db954', 
           },
+          headerStyle: {
+            backgroundColor: '#121212',
+            borderBottomWidth: 1, 
+            borderBottomColor: '#1db954', 
+           },     
+           headerTintColor: '#FFFFFF',
+             headerTitleStyle: {fontWeight: 'bold',},
         })}
       >
         <Tab.Screen name="Home">
