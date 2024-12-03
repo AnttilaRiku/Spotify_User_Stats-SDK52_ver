@@ -1,15 +1,26 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
+import { Alert, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from '../screens/HomeScreen';
-import { StatusBar } from 'react-native';
 import ProfileScreen from '../screens/ProfileScreen';
-import LogoutScreen from '../screens/LogoutScreen';
 
 const Tab = createBottomTabNavigator();
 
-export default function Navigation({ userData, topTracks,  spotifyApiToken, onLogout }) {
+export default function Navigation({ userData, topTracks, spotifyApiToken, onLogout }) {
+  const handleLogout = () => {
+    Alert.alert(
+      'Log out',
+      'Are you sure you want to log out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Log out', style: 'destructive', onPress: onLogout },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <NavigationContainer>
       <StatusBar backgroundColor="#121212"/>
@@ -31,17 +42,17 @@ export default function Navigation({ userData, topTracks,  spotifyApiToken, onLo
           tabBarActiveTintColor: '#1db954',
           tabBarInactiveTintColor: '#b3b3b3',
           tabBarStyle: {
-            backgroundColor: '#121212', 
-            borderTopWidth: 1, 
-            borderTopColor: '#1db954', 
+            backgroundColor: '#121212',
+            borderTopWidth: 1,
+            borderTopColor: '#1db954',
           },
           headerStyle: {
             backgroundColor: '#121212',
-            borderBottomWidth: 1, 
-            borderBottomColor: '#1db954', 
-           },     
-           headerTintColor: '#FFFFFF',
-             headerTitleStyle: {fontWeight: 'bold',},
+            borderBottomWidth: 1,
+            borderBottomColor: '#1db954',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: { fontWeight: 'bold',},
         })}
       >
         <Tab.Screen name="Home">
@@ -50,7 +61,7 @@ export default function Navigation({ userData, topTracks,  spotifyApiToken, onLo
               {...props}
               userData={userData}
               topTracks={topTracks}
-              spotifyApiToken={spotifyApiToken} 
+              spotifyApiToken={spotifyApiToken}
             />
           )}
         </Tab.Screen>
@@ -59,15 +70,20 @@ export default function Navigation({ userData, topTracks,  spotifyApiToken, onLo
             <ProfileScreen
               {...props}
               userData={userData}
-              spotifyApiToken={spotifyApiToken} 
+              spotifyApiToken={spotifyApiToken}
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Log out">
-          {(props) => (
-            <LogoutScreen {...props} onLogout={onLogout} />
-          )}
-        </Tab.Screen>
+        <Tab.Screen
+          name="Log out"
+          component={() => null} 
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault(); 
+              handleLogout(); 
+            },
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
