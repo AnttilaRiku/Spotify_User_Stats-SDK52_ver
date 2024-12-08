@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Image } from 'react-native';
 import Navigation from './components/Navigation';
 import { authenticateWithSpotify } from './components/spotifyAuth';
 import { fetchUserData, fetchUserTopTracks } from './components/spotifyApi';
-import { PaperProvider,DefaultTheme } from 'react-native-paper';
+import { PaperProvider,DefaultTheme, Text} from 'react-native-paper';
 import { Button } from 'react-native-paper';
+import styles from './style/style';
 
 const spotifyTheme = {
   ...DefaultTheme,
@@ -19,7 +20,6 @@ const spotifyTheme = {
     accent: '#535353', 
   },
 };
-
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -77,9 +77,16 @@ export default function App() {
             {loading ? (
               <ActivityIndicator size="large" color="#1db954" />
             ) : (
-              <Button mode="contained" onPress={handleLogin}>
-                Login with Spotify
-              </Button>
+              <>
+                <Image
+                  source={require('./assets/logo1.png')}
+                  style={styles.logoImage}
+                />
+                <Text style={styles.welcomeText}>Welcome to Spotify Stats!</Text>
+                <Button mode="contained" onPress={handleLogin}>
+                  Login with Spotify
+                </Button>
+              </>
             )}
           </View>
         ) : (

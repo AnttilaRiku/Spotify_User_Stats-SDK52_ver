@@ -53,6 +53,16 @@ const styles = StyleSheet.create({
     color: '#1db954', 
     textDecorationLine: 'underline',
   },
+  logoImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 20, 
+  },
+  welcomeText: {
+    fontSize: 18,
+    color: '#267a35', 
+    marginBottom: 20,  
+  },
   
   //WIP TEST
   fab: {

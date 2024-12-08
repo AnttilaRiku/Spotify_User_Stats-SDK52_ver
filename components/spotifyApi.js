@@ -165,3 +165,56 @@ export const fetchRecommendations = async (token, seedData) => {
     return [];
   }
 };
+
+//Listening times
+export async function fetchListeningTime(token, periodDays) {
+  try {
+    const now = new Date();
+    const periodStart = new Date(now - periodDays * 24 * 60 * 60 * 1000); 
+    console.log(`Fetching listening time from: ${periodStart.toISOString()}`);
+
+    const response = await fetch(
+      `https://api.spotify.com/v1/me/player/recently-played?limit=50&after=${periodStart.toISOString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch data from Spotify API');
+    }
+
+    const data = await response.json();
+
+    if (!data.items || data.items.length === 0) {
+      return 0;
+    }
+
+    const totalListeningTimeMs = data.items.reduce((total, item) => {
+      if (item.track && item.track.duration_ms) {
+        return total + item.track.duration_ms;
+      }
+      return total;
+    }, 0);
+
+    return (totalListeningTimeMs / (1000 * 60 * 60)).toFixed(2); 
+  } catch (error) {
+    console.error('Error fetching listening time:', error);
+    return 0;
+  }
+}
+
+export async function fetchListeningTimes(token) {
+  const weekListeningTime = await fetchListeningTime(token, 7);
+  const monthListeningTime = await fetchListeningTime(token, 30);
+  const yearListeningTime = await fetchListeningTime(token, 365);
+
+  return {
+    Week: weekListeningTime,
+    Month: monthListeningTime,
+    Year: yearListeningTime,
+  };
+}
+

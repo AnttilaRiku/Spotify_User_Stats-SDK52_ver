@@ -243,7 +243,6 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.menu}>
-            {/* Close Button */}
             <TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
               <Ionicons name="close" size={24} color="#121212" />
             </TouchableOpacity>
