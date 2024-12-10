@@ -62,25 +62,22 @@ export async function fetchUserTopArtists(token, limit = 10) {
 }
 
 // Recently played tracks fetch
-export async function fetchUserRecentlyPlayedTracks(token, limit = 10) {
+export async function fetchUserRecentlyPlayedTracks(token) {
+  const endpoint = 'https://api.spotify.com/v1/me/player/recently-played';
   try {
-    const response = await fetch(`https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`, {
+    const response = await fetch(endpoint, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     if (!response.ok) {
-      console.error('Error fetching recently played tracks:', response.statusText);
-      return [];
+      throw new Error(`Spotify API error: ${response.status} ${response.statusText}`);
     }
-
     const data = await response.json();
-    console.log('Fetched Recently Played Tracks Data:', data);
-    return data.items.map((item) => item.track); // Return only the track details
+    return data.items.map((item) => item.track);
   } catch (error) {
     console.error('Error fetching recently played tracks:', error);
-    return [];
+    throw error;
   }
 }
 
@@ -90,7 +87,7 @@ export async function fetchUserTopGenres(token, limit = 10) {
     const topArtists = await fetchUserTopArtists(token, limit);
     const genres = topArtists.flatMap((artist) => artist.genres);
     const uniqueGenres = Array.from(new Set(genres)); // Remove duplicate genres
-    console.log('Fetched Top Genres Data:', uniqueGenres);
+   // console.log('Fetched Top Genres Data:', uniqueGenres);
     return uniqueGenres;
   } catch (error) {
     console.error('Error fetching top genres:', error);

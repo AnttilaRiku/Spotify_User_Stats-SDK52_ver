@@ -11,7 +11,7 @@ const REDIRECT_URI = AuthSession.makeRedirectUri({
 console.log('Redirect URI:', REDIRECT_URI);
 
 
-const SCOPE = 'user-read-private user-read-email user-top-read playlist-read-private';
+const SCOPE = 'user-read-private user-read-email user-top-read playlist-read-private user-read-recently-played';
 
 const discovery = {
   authorizationEndpoint: 'https://accounts.spotify.com/authorize',

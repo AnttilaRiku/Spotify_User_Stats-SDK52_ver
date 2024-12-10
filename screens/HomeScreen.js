@@ -21,7 +21,7 @@ import {
 } from '../components/spotifyApi';
 
 export default function HomeScreen({ userData, spotifyApiToken }) {
-  const [topGenres, setTopGenres] = useState([]); // Genret tallennetaan tähän
+  const [topGenres, setTopGenres] = useState([]);
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentData, setCurrentData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,11 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       } else {
         const data = await apiFunction(spotifyApiToken);
 
-        if (apiFunction === fetchUserPlaylists) {
+
+        if (apiFunction === fetchUserRecentlyPlayedTracks) {
+          console.log('Fetched Recently Played Data:', data);
+          setCurrentData(data); // Save recently played tracks data
+        } else if (apiFunction === fetchUserPlaylists) {
           const createdPlaylists = data.filter(
             (playlist) => playlist.owner.display_name === userData.display_name
           );
@@ -110,6 +114,13 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (currentTitle === 'Recently Played') {
+      console.log('Recently Played Data:', currentData);
+    }
+
+  }, [currentData]);
   const menuOptions = [
     { label: 'Summary', onPress: () => fetchData('Summary') },
     { label: 'Top Genres', onPress: () => fetchData(fetchUserTopGenres) },
@@ -118,7 +129,6 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
     { label: 'Recently Played', onPress: () => fetchData(fetchUserRecentlyPlayedTracks) },
     { label: 'My Playlists', onPress: () => fetchData(fetchUserPlaylists) },
   ];
-
   return (
     <View style={styles.container}>
       {/* User Info Section */}
@@ -136,8 +146,8 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         </View>
       )}
 
-          {/* Title Section */}
-          <View style={styles.sectionTitle}>
+      {/* Title Section */}
+      <View style={styles.sectionTitle}>
         <Text style={styles.sectionTitle}>{currentTitle}</Text>
       </View>
 
@@ -145,15 +155,31 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       {currentTitle === 'Summary' && !loading && (
         <Text style={styles.menuText}>{summary}</Text>
       )}
-
       <>
+
+        {currentTitle === 'Recently Played' && !loading && (
+          <FlatList
+            data={currentData}
+            keyExtractor={(item) => item.id || item.played_at}
+            renderItem={({ item }) => (
+              <View style={styles.trackContainer}>
+                <View style={styles.trackDetails}>
+                  <Text style={styles.trackName}>{item.track.name}</Text>
+                  <Text style={styles.trackArtist}>
+                    {item.track.artists.map((artist) => artist.name).join(', ')}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
+        )}
         {/* Genre-näkymä */}
         {currentTitle === 'Top Genres' ? (
           <FlatList
-          data={topGenres}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <Text style={styles.genreText}>{item}</Text>
+            data={topGenres}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <Text style={styles.genreText}>{item}</Text>
             )}
           />
         ) : currentTitle === 'My Playlists' ? (
