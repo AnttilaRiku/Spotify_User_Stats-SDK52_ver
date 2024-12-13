@@ -26,7 +26,7 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
   const [currentData, setCurrentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentTitle, setCurrentTitle] = useState('Summary');
-  const [playlists, setPlaylists] = useState({ created: [], subscribed: [] });
+  const [playlists, setPlaylists] = useState([]);
   const [summary, setSummary] = useState('');
 
   const toggleMenu = () => {
@@ -69,6 +69,15 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
     }
   };
 
+  const fetchPlaylists = async () => {
+    try {
+      const data = await fetchUserPlaylists(spotifyApiToken);
+      setPlaylists(data);
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData('Summary');
   }, []);
@@ -81,6 +90,10 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         await fetchSummary();
         setCurrentData(null);
         setCurrentTitle('Summary');
+      } else if (apiFunction === "My Playlists") {
+        await fetchPlaylists();
+        setCurrentData([]);
+        setCurrentTitle("My Playlists");
       } else {
         const data = await apiFunction(spotifyApiToken);
 
@@ -88,21 +101,11 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         if (apiFunction === fetchUserRecentlyPlayedTracks) {
           console.log('Fetched Recently Played Data:', data);
           setCurrentData(data); // Save recently played tracks data
-        } else if (apiFunction === fetchUserPlaylists) {
-          const createdPlaylists = data.filter(
-            (playlist) => playlist.owner.display_name === userData.display_name
-          );
-          const subscribedPlaylists = data.filter(
-            (playlist) => playlist.owner.display_name !== userData.display_name
-          );
-          setPlaylists({ created: createdPlaylists, subscribed: subscribedPlaylists });
         } else if (apiFunction === fetchUserTopGenres) {
           setTopGenres(data);
-          setPlaylists([]);
           setCurrentData([]);
         } else {
           setCurrentData(data);
-          setPlaylists([]);
           setTopGenres([]);
         }
 
@@ -127,7 +130,7 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
     { label: 'Top Artists', onPress: () => fetchData(fetchUserTopArtists) },
     { label: 'Top Tracks', onPress: () => fetchData(fetchUserTopTracks) },
     { label: 'Recently Played', onPress: () => fetchData(fetchUserRecentlyPlayedTracks) },
-    { label: 'My Playlists', onPress: () => fetchData(fetchUserPlaylists) },
+    { label: "My Playlists", onPress: () => fetchData("My Playlists") },
   ];
   return (
     <View style={styles.container}>
@@ -155,80 +158,55 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       {currentTitle === 'Summary' && !loading && (
         <Text style={styles.menuText}>{summary}</Text>
       )}
-      <>
 
-        {currentTitle === 'Recently Played' && !loading && (
-          <FlatList
-            data={currentData}
-            keyExtractor={(item) => item.id || item.played_at}
-            renderItem={({ item }) => (
-              <View style={styles.trackContainer}>
-                <View style={styles.trackDetails}>
-                  <Text style={styles.trackName}>{item.track.name}</Text>
-                  <Text style={styles.trackArtist}>
-                    {item.track.artists.map((artist) => artist.name).join(', ')}
-                  </Text>
-                </View>
+      {/* Recently Played Section */}
+      {currentTitle === 'Recently Played' && !loading && (
+        <FlatList
+          data={currentData}
+          keyExtractor={(item) => item.id || item.played_at}
+          renderItem={({ item }) => (
+            <View style={styles.trackContainer}>
+              <View style={styles.trackDetails}>
+                <Text style={styles.trackName}>{item.track.name}</Text>
+                <Text style={styles.trackArtist}>
+                  {item.track.artists.map((artist) => artist.name).join(", ")}
+                </Text>
               </View>
-            )}
-          />
-        )}
-        {/* Genre-näkymä */}
-        {currentTitle === 'Top Genres' ? (
-          <FlatList
-            data={topGenres}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <Text style={styles.genreText}>{item}</Text>
-            )}
-          />
-        ) : currentTitle === 'My Playlists' ? (
-          <>
-            {/* Playlists Created by You (WIP) */}
-            <Text style={styles.sectionTitle}>Playlists Created by You:</Text>
-            {playlists.created.length > 0 ? (
-              <FlatList
-                data={playlists.created}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <View style={styles.playlistContainer}>
-                    {item.images?.[0]?.url && (
-                      <Image
-                        source={{ uri: item.images[0].url }}
-                        style={styles.playlistImage}
-                      />
-                    )}
-                    <Text style={styles.playlistText}>{item.name}</Text>
-                  </View>
-                )}
-              />
-            ) : (
-              <Text>No playlists created by you.</Text>
-            )}
+            </View>
+          )}
+        />
+      )}
 
-            {/* Playlists You've Subscribed To (WIP) */}
-            <Text style={styles.sectionTitle}>Playlists You've Subscribed To:</Text>
-            {playlists.subscribed.length > 0 ? (
-              <FlatList
-                data={playlists.subscribed}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <View style={styles.playlistContainer}>
-                    {item.images?.[0]?.url && (
-                      <Image
-                        source={{ uri: item.images[0].url }}
-                        style={styles.playlistImage}
-                      />
-                    )}
-                    <Text style={styles.playlistText}>{item.name}</Text>
-                  </View>
-                )}
-              />
-            ) : (
-              <Text>No subscribed playlists.</Text>
-            )}
-          </>
-        ) : (
+      {/* Genre-näkymä */}
+      {currentTitle === 'Top Genres' && (
+        <FlatList
+          data={topGenres}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Text style={styles.genreText}>{item}</Text>
+          )}
+        />
+      )}
+
+      {/* Playlists Section */}
+      {currentTitle === 'My Playlists' && !loading && (
+        <FlatList
+          data={playlists}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.trackContainer}>
+              {item.images?.[0]?.url && (
+                <Image
+                  source={{ uri: item.images[0].url }}
+                  style={styles.trackImage}
+                />
+              )}
+              <Text style={styles.trackText}>{item.name}</Text>
+            </View>
+          )}
+        />
+      )}
+      {currentTitle !== "My Playlists" && currentTitle !== "Summary" && currentTitle !== "Top Genres" && (
           <FlatList
             data={currentData}
             keyExtractor={(item) => item.id}
@@ -255,7 +233,6 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
             )}
           />
         )}
-      </>
 
       <TouchableOpacity style={styles.fab} onPress={toggleMenu}>
         <Ionicons name="menu" size={24} />
