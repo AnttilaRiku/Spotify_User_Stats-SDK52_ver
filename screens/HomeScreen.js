@@ -43,22 +43,21 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
       ]);
 
       let summaryText = '';
-
       const topArtist = artists[0];
       if (topArtist) {
         const artistComment = artistsComments[topArtist.name] || `You seem to enjoy ${topArtist.name}!`;
-        summaryText += `Top Artist: ${topArtist.name}. ${artistComment}\n`;
+        summaryText += `Top Artist:\n ${topArtist.name}. ${artistComment}\n\n`;
       }
 
       const topGenre = genres[0];
       if (topGenre) {
         const genreComment = genreComments[topGenre] || `You like ${topGenre}, great choice!`;
-        summaryText += `Top Genre: ${topGenre}. ${genreComment}\n`;
+        summaryText += `Top Genre:\n ${topGenre}. ${genreComment}\n\n`;
       }
 
       const topTrack = tracks[0];
       if (topTrack) {
-        summaryText += `Top Track: ${topTrack.name} by ${topTrack.artists.map((a) => a.name).join(', ')}.`;
+        summaryText += `Top Track:\n ${topTrack.name} by ${topTrack.artists.map((a) => a.name).join(', ')}.`;
       }
 
       setSummary(summaryText);
@@ -100,7 +99,7 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
 
         if (apiFunction === fetchUserRecentlyPlayedTracks) {
           console.log('Fetched Recently Played Data:', data);
-          setCurrentData(data); // Save recently played tracks data
+          setCurrentData(data); 
         } else if (apiFunction === fetchUserTopGenres) {
           setTopGenres(data);
           setCurrentData([]);
@@ -134,7 +133,7 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
   ];
   return (
     <View style={styles.container}>
-      {/* User Info Section */}
+     
       {userData && (
         <View style={styles.userInfoContainer}>
           {userData.images?.[0]?.url && (
@@ -149,17 +148,20 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         </View>
       )}
 
-      {/* Title Section */}
+    
       <View style={styles.sectionTitle}>
         <Text style={styles.sectionTitle}>{currentTitle}</Text>
       </View>
 
-      {/* Summary Section */}
+      
       {currentTitle === 'Summary' && !loading && (
-        <Text style={styles.menuText}>{summary}</Text>
+        <View>
+        <Text style={styles.summaryText}>{summary}</Text>
+       
+        </View>
       )}
 
-      {/* Recently Played Section */}
+      
       {currentTitle === 'Recently Played' && !loading && (
         <FlatList
           data={currentData}
@@ -177,7 +179,7 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         />
       )}
 
-      {/* Genre-näkymä */}
+     
       {currentTitle === 'Top Genres' && (
         <FlatList
           data={topGenres}
@@ -188,7 +190,7 @@ export default function HomeScreen({ userData, spotifyApiToken }) {
         />
       )}
 
-      {/* Playlists Section */}
+     
       {currentTitle === 'My Playlists' && !loading && (
         <FlatList
           data={playlists}

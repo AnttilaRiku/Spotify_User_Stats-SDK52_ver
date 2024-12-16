@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    
   },
   profileImage: {
     width: 70,
@@ -19,11 +20,12 @@ const styles = StyleSheet.create({
   },
   userDetails: {
     flex: 1,
+    margin: 20,
   },
   displayName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#b3b3b3', 
+    color: 'white', 
   },
   email: {
     fontSize: 16,
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#b3b3b3',
+    color: '#1db954',
   },
   trackContainer: {
     flexDirection: 'row',
@@ -47,7 +49,8 @@ const styles = StyleSheet.create({
   },
   trackText: {
     fontSize: 16,
-    color: '#b3b3b3', 
+    color: '#b3b3b3',
+    margin: 4, 
   },
   link: {
     color: '#1db954', 
@@ -102,7 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
-    color: '#333',
+    color: '#1db954',
   },
   genreText: {
     fontSize: 16,
@@ -144,7 +147,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
- 
+
+  summaryText: {
+    fontSize: 16,
+    color: '#b3b3b3', 
+    lineHeight: 28, 
+    marginBottom: 20, 
+    textAlign: 'left', 
+ },
 });
 
 export default styles;

@@ -50,6 +50,7 @@ export default function Navigation({ userData, topTracks, spotifyApiToken, onLog
             backgroundColor: '#121212',
             borderBottomWidth: 1,
             borderBottomColor: '#1db954',
+          
           },
           headerTintColor: '#FFFFFF',
           headerTitleStyle: { fontWeight: 'bold',},

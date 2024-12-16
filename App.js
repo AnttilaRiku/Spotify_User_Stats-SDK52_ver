@@ -18,6 +18,7 @@ const spotifyTheme = {
     text: '#b3b3b3', 
     placeholder: '#535353', 
     accent: '#535353', 
+    border: '#1db954',
   },
 };
 
@@ -39,9 +40,9 @@ export default function App() {
     }
   };
 
-  // Kirjautumisen ulos -toiminto
+ 
   const handleLogout = () => {
-    // Tyhjennetään tunnus (token) ja käyttäjätiedot
+   
     setToken(null);
     setUserData(null);
     setTopTracks([]);
@@ -70,8 +71,9 @@ export default function App() {
   }, [token]);
 
   return (
+
     <PaperProvider theme={spotifyTheme}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: '#121212' }}>
         {!userData ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             {loading ? (
